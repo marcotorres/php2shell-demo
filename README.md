@@ -75,6 +75,8 @@ una por stack. La gracia no es la shell: es **el usuario con el que corre cada p
 ## Arranque rápido
 
 ```bash
+git clone https://github.com/marcotorres/php2shell-demo.git
+cd php2shell-demo
 chmod +x run.sh
 ./run.sh
 ```
