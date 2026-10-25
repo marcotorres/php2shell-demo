@@ -1,0 +1,10 @@
+# Grabaciones de asciinema generadas localmente
+*.cast
+
+# IDEs
+.idea/
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db

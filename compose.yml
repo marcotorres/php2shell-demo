@@ -1,0 +1,76 @@
+# ============================================================================
+#  php2shell-demo · Laboratorio DEFENSIVO para CVE-2026-109618 / CVE-2026-109619
+# ----------------------------------------------------------------------------
+#  Dos servidores PHP idénticos salvo por su configuración:
+#    · vulnerable  → mal configurado (display_errors On, upload_progress On,
+#                    use_strict_mode Off, memory_limit minúsculo, expose_php On)
+#    · hardened    → endurecido + una regla tipo-WAF que corta la sonda
+#  Un tercer servicio (triage) los audita y compara en vivo.
+#
+#  NO contiene exploits, payloads de RCE ni web shells. Solo ilustra la
+#  SUPERFICIE de reconocimiento y cómo el endurecimiento la elimina.
+#
+#  Uso:   ./run.sh           (levanta, audita y desmonta — ideal para asciinema)
+#  o:     docker compose up -d --build vulnerable hardened
+#         docker compose run --rm triage
+# ============================================================================
+name: php2shell-demo
+
+services:
+  vulnerable:
+    build: ./vulnerable
+    image: php2shell-demo/vulnerable
+    container_name: php2shell-vulnerable
+    ports:
+      - "${VULN_PORT:-8091}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost/healthz"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+
+  hardened:
+    build: ./hardened
+    image: php2shell-demo/hardened
+    container_name: php2shell-hardened
+    ports:
+      - "${HARD_PORT:-8092}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost/healthz"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+
+  triage:
+    build: ./triage
+    image: php2shell-demo/triage
+    container_name: php2shell-triage
+    profiles: ["tools"]        # no arranca solo; se invoca con `compose run`
+    depends_on:
+      vulnerable:
+        condition: service_healthy
+      hardened:
+        condition: service_healthy
+    environment:
+      VULN_URL: "http://vulnerable"
+      HARD_URL: "http://hardened"
+
+  # --- Escenas de las "primas" de PHP2Shell (misma semana, otro stack) --------
+  # Contenedores para las dramatizaciones post-explotación de Node.js y Next.js.
+  # profile "scenes" => no arrancan con el triaje; los levanta su script.
+  # Cada uno corre con un USUARIO distinto a propósito, para enseñar que el
+  # "botín" de un RCE depende de cómo montes el servicio, no de la vuln.
+  node-lab:
+    build: ./node-lab
+    image: php2shell-demo/node-lab
+    container_name: php2shell-node-lab
+    profiles: ["scenes"]
+    # SIN `user:` → corre como ROOT (el descuido más común en Dockerfiles Node).
+
+  next-lab:
+    build: ./next-lab
+    image: php2shell-demo/next-lab
+    container_name: php2shell-next-lab
+    profiles: ["scenes"]
+    # Corre como el usuario `nextjs` (uid 1001), tal y como recomienda la guía
+    # oficial de Next. El mismo RCE hace mucho menos daño aquí.

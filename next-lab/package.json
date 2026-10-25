@@ -1,0 +1,15 @@
+{
+  "name": "next-lab",
+  "private": true,
+  "version": "1.0.0",
+  "description": "App Next mínima para la escena post-explotación del laboratorio php2shell-demo",
+  "scripts": {
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.33",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
