@@ -14,7 +14,6 @@
 #      no código funcional.
 #
 #  Uso:    ./demo-shell.sh
-#  Grabar: asciinema rec php2shell-shell.cast -c "./demo-shell.sh"
 # ============================================================================
 set -uo pipefail
 cd "$(dirname "$0")"

@@ -10,7 +10,7 @@
 #  NO contiene exploits, payloads de RCE ni web shells. Solo ilustra la
 #  SUPERFICIE de reconocimiento y cómo el endurecimiento la elimina.
 #
-#  Uso:   ./run.sh           (levanta, audita y desmonta — ideal para asciinema)
+#  Uso:   ./run.sh           (levanta, audita y desmonta de un tirón)
 #  o:     docker compose up -d --build vulnerable hardened
 #         docker compose run --rm triage
 # ============================================================================

@@ -1,6 +1,3 @@
-# Grabaciones de asciinema generadas localmente
-*.cast
-
 # IDEs
 .idea/
 .vscode/
